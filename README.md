@@ -2,7 +2,17 @@
 
 Application for registering employee entries with the possibility of generating reports, validating and storing users with minimal effort.
 
-![App preview](https://i.imgur.com/aL7IlLR.png)
+<p align="center">
+  <a href="https://agile-visitors.netlify.app/">DEMO</a>
+</p>
+
+<br/>
+
+<p align="center">
+  <a href="https://agile-visitors.netlify.app/">
+    <img src="https://i.imgur.com/nNqdlbi.png" alt="app_demo" />
+  </a>
+</p>
 
 # Get Started
 
