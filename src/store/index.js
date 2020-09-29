@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import users from './Users/index'
 import visits from './Visits/index'
+import substations from './SubStations/index'
 
 Vue.use(Vuex)
 
@@ -18,7 +19,8 @@ export default function (/* { ssrContext } */) {
   const Store = new Vuex.Store({
     modules: {
       users,
-      visits
+      visits,
+      substations
     },
 
     // enable strict mode (adds overhead!)

@@ -16,6 +16,26 @@
         <div class="col flex">
           <q-input disable class="q-mr-md" label="Visitor code" v-model="filters.visitorCode" />
           <q-input disable label="Receiver code" v-model="filters.receiverCode" />
+          <q-select
+            v-model="filters.substationId"
+            :options="substations"
+            label="Subestación"
+            style="width:200px"
+            class="q-ml-md"
+            emit-value
+            map-options
+            option-value="id"
+            option-label="name"
+          >
+          <template v-slot:append>
+          <q-icon
+            v-if="filters.substationId !== null"
+            class="cursor-pointer"
+            name="clear"
+            @click.stop="filters.substationId = null"
+          />
+        </template>
+          </q-select>
         </div>
     </div>
     <div class="row q-mt-lg">
@@ -44,14 +64,25 @@ export default {
     AppDatePicker: () => import('../components/AppDatePicker')
   },
   name: 'ReportPageComponent',
+  mounted () {
+    this.$store.dispatch('substations/getAll')
+      .then(response => {
+        this.substations = response.data.data
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  },
   data () {
     return {
       filters: {
         visitorCode: '',
         receiverCode: '',
         fromDate: '',
-        toDate: ''
+        toDate: '',
+        substationId: ''
       },
+      substations: [],
       columns: [
         {
           name: 'visitor',
@@ -64,6 +95,7 @@ export default {
         },
         { name: 'fullNameVisitor', align: 'left', label: 'Full name visitor', field: row => row.visitor.fullName, sortable: true },
         { name: 'titleVisitor', label: 'Title / Position visitor', field: row => row.visitor.titlePosition, sortable: true },
+        { name: 'substation', label: 'Substation', field: row => row.substation.name, sortable: true },
         { name: 'reason', align: 'left', label: 'Reason for visit', field: 'reasonVisit' },
         { name: 'receiverCode', align: 'left', label: 'Receiver code', field: row => row.receiver.code },
         { name: 'fullNameReceiver', align: 'left', label: 'Full name receiver', field: row => row.receiver.fullName },
