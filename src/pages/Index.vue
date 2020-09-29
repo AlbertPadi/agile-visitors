@@ -69,7 +69,6 @@
       <div class="row q-mt-lg">
         <q-btn color="primary" icon="save" label="SAVE" type="submit" />
       </div>
-      {{form}}
     </q-form>
   </div>
 </template>
