@@ -17,7 +17,7 @@ export function getAll (context, filters = null) {
  */
 function getQueryParams (filters) {
   // api/visits?createAt=between:2020-09-01,2020-09-30
-  const { visitorCode, receiverCode, fromDate, toDate } = filters
+  const { visitorCode, receiverCode, fromDate, toDate, substationId } = filters
   const hasSomeFilter = Object.keys(filters).some((key) => !!filters[key])
   let query = '?'
 
@@ -30,6 +30,11 @@ function getQueryParams (filters) {
   // if (receiverCode) query = query + `receiver.code=${receiverCode}`
   if (fromDate && toDate) {
     query = query + `createdAt=between:${fromDate.replaceAll('/', '-')},${toDate.replaceAll('/', '-')}`
+  }
+
+  if (substationId) {
+    const substation = `substationId=${substationId}`
+    query = (query === '?') ? query + substation : query + '&' + substation
   }
   return query
 }
