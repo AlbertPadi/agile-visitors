@@ -24,6 +24,17 @@
             v-model.trim="form.visitor.titlePosition"
             :rules="[formRulesMixin_requiredInput]"
           />
+          <q-select
+            v-model="form.visitor.substationId"
+            :options="substations"
+            label="Subestación"
+            class="q-mb-md"
+            emit-value
+            map-options
+            option-value="id"
+            option-label="name"
+            :rules="[val => !!val || 'Please select value']"
+          />
           <q-input
             v-model.trim="form.reasonVisit"
             label="Reason for visit"
@@ -68,13 +79,23 @@ import formMixin from 'src/mixins/FormRules'
 export default {
   name: 'PageIndex',
   mixins: [formMixin],
+  mounted () {
+    this.$store.dispatch('substations/getAll')
+      .then(response => {
+        this.substations = response.data.data
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  },
   data () {
     return {
       form: {
         visitor: {
           code: null,
           fullName: null,
-          titlePosition: null
+          titlePosition: null,
+          substationId: null
         },
         receiver: {
           code: '',
@@ -83,6 +104,7 @@ export default {
         },
         reasonVisit: null
       },
+      substations: [],
       loading: {
         visitor: false,
         receiver: false,
@@ -99,6 +121,7 @@ export default {
           this.form.visitor.code = null
           this.form.visitor.fullName = null
           this.form.visitor.titlePosition = null
+          this.form.visitor.substationId = null
           this.form.reasonVisit = null
           this.$q.notify({
             type: 'positive',
