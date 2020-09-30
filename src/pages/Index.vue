@@ -7,7 +7,7 @@
 
           <q-input
             label="Visitor code"
-            v-model="form.visitor.code"
+            v-model.trim="form.visitor.code"
             :rules="[formRulesMixin_requiredInput]"
             lazy-rules
             debounce="500"
@@ -16,12 +16,12 @@
           />
           <q-input
             label="Full name"
-            v-model="form.visitor.fullName"
+            v-model.trim="form.visitor.fullName"
             :rules="[formRulesMixin_requiredInput]"
           />
           <q-input
             label="Title / Position"
-            v-model="form.visitor.titlePosition"
+            v-model.trim="form.visitor.titlePosition"
             :rules="[formRulesMixin_requiredInput]"
           />
           <q-select
@@ -36,7 +36,7 @@
             :rules="[val => !!val || 'Please select value']"
           />
           <q-input
-            v-model="form.reasonVisit"
+            v-model.trim="form.reasonVisit"
             label="Reason for visit"
             filled
             type="textarea"
@@ -48,7 +48,7 @@
 
           <q-input
             label="Receiver code"
-            v-model="form.receiver.code"
+            v-model.trim="form.receiver.code"
             :rules="[formRulesMixin_requiredInput]"
             debounce="500"
             :loading="loading.receiver"
@@ -56,18 +56,18 @@
           />
           <q-input
             label="Full name"
-            v-model="form.receiver.fullName"
+            v-model.trim="form.receiver.fullName"
             :rules="[formRulesMixin_requiredInput]"
           />
           <q-input
             label="Title / Position"
-            v-model="form.receiver.titlePosition"
+            v-model.trim="form.receiver.titlePosition"
             :rules="[formRulesMixin_requiredInput]"
           />
         </div>
       </div>
       <div class="row q-mt-lg">
-        <q-btn color="primary" icon="save" label="SAVE" type="submit" />
+        <q-btn :loading="loading.submitVisit" color="primary" icon="save" label="SAVE" type="submit" />
       </div>
     </q-form>
   </div>
@@ -107,12 +107,14 @@ export default {
       substations: [],
       loading: {
         visitor: false,
-        receiver: false
+        receiver: false,
+        submitVisit: false
       }
     }
   },
   methods: {
     createvisit () {
+      this.loading.submitVisit = true
       this.$store
         .dispatch('visits/create', this.form)
         .then(response => {
@@ -132,6 +134,9 @@ export default {
             type: 'negative',
             message: 'Internal server error, try again...'
           })
+        })
+        .finally(() => {
+          this.loading.submitVisit = false
         })
     },
     requestVisitorByCode () {
