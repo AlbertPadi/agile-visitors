@@ -1,29 +1,34 @@
 <template>
   <div class="q-pa-md">
     <q-form @submit="createvisit()" ref="formVisits" class="q-gutter-md">
-      <div class="row q-gutter-md">
+      <div class="row q-gutter-xs">
         <div class="col-12 col-md-5 col-sm-12">
-          <label class="text-weight-bold text-h4" for="">Visitor</label>
-
+          <label class="text-weight-bold text-h4" for="">{{ $t('visitor') }}</label>
           <q-input
-            label="Visitor code"
-            v-model.trim="form.visitor.code"
-            :rules="[formRulesMixin_requiredInput]"
+            :label="$t('register_visit_form.code')"
+            v-model="form.visitor.code"
+            maxlength="30"
+            :rules="[formRulesMixin_requiredInput, formRulesMixin_codeInput]"
             lazy-rules
             debounce="500"
             :loading="loading.visitor"
             @input="requestVisitorByCode()"
           />
+          <characters-remaining-info :text="form.visitor.code" :maxLength="30" :numberCharactersToNotify="20" />
           <q-input
-            label="Full name"
-            v-model.trim="form.visitor.fullName"
+            :label="$t('register_visit_form.full_name')"
+            v-model="form.visitor.fullName"
+            maxlength="70"
+            :rules="[formRulesMixin_requiredInput, formRulesMixin_nameInput]"
+          />
+          <characters-remaining-info :text="form.visitor.fullName" :maxLength="70" :numberCharactersToNotify="50" />
+          <q-input
+            :label="$t('register_visit_form.title')"
+            v-model="form.visitor.titlePosition"
+            maxlength="150"
             :rules="[formRulesMixin_requiredInput]"
           />
-          <q-input
-            label="Title / Position"
-            v-model.trim="form.visitor.titlePosition"
-            :rules="[formRulesMixin_requiredInput]"
-          />
+          <characters-remaining-info :text="form.visitor.titlePosition" :maxLength="150" :numberCharactersToNotify="130" />
           <q-select
             v-model="form.visitor.substationId"
             :options="substations"
@@ -36,38 +41,47 @@
             :rules="[val => !!val || 'Please select value']"
           />
           <q-input
-            v-model.trim="form.reasonVisit"
-            label="Reason for visit"
+            v-model="form.reasonVisit"
+            maxlength="256"
+            :label="$t('register_visit_form.reason_for_visit')"
             filled
             type="textarea"
             :rules="[formRulesMixin_requiredInput]"
-          />
+            class="q-pt-lg"
+           />
+           <characters-remaining-info :text="form.reasonVisit" :maxLength="256" :numberCharactersToNotify="240" />
         </div>
         <div class="col-12 col-md-5 col-sm-12">
-          <label class="text-weight-bold text-h4" for="">Receiver</label>
+          <label class="text-weight-bold text-h4" for="">{{ $t('receiver') }}</label>
 
           <q-input
-            label="Receiver code"
-            v-model.trim="form.receiver.code"
-            :rules="[formRulesMixin_requiredInput]"
+            :label="$t('register_visit_form.code')"
+            v-model="form.receiver.code"
+            maxlength="30"
+            :rules="[formRulesMixin_requiredInput, formRulesMixin_codeInput]"
             debounce="500"
             :loading="loading.receiver"
             @input="requestReceiverByCode()"
           />
+          <characters-remaining-info :text="form.receiver.code" :maxLength="30" :numberCharactersToNotify="20" />
           <q-input
-            label="Full name"
-            v-model.trim="form.receiver.fullName"
+            :label="$t('register_visit_form.full_name')"
+            v-model="form.receiver.fullName"
+            maxlength="70"
+            :rules="[formRulesMixin_requiredInput, formRulesMixin_nameInput]"
+          />
+          <characters-remaining-info :text="form.receiver.fullName" :maxLength="70" :numberCharactersToNotify="50" />
+          <q-input
+            :label="$t('register_visit_form.title')"
+            v-model="form.receiver.titlePosition"
+            maxlength="150"
             :rules="[formRulesMixin_requiredInput]"
           />
-          <q-input
-            label="Title / Position"
-            v-model.trim="form.receiver.titlePosition"
-            :rules="[formRulesMixin_requiredInput]"
-          />
+          <characters-remaining-info :text="form.receiver.titlePosition" :maxLength="150" :numberCharactersToNotify="130" />
         </div>
       </div>
-      <div class="row q-mt-lg">
-        <q-btn :loading="loading.submitVisit" color="primary" icon="save" label="SAVE" type="submit" />
+      <div class="row q-gutter-xs">
+        <q-btn :loading="loading.submitVisit" color="primary" icon="save" :label="$t('save_button')" type="submit" />
       </div>
     </q-form>
   </div>
@@ -75,6 +89,7 @@
 
 <script>
 import formMixin from 'src/mixins/FormRules'
+import CharactersRemainingInfo from 'components/CharactersRemainingInfo'
 
 export default {
   name: 'PageIndex',
@@ -88,13 +103,14 @@ export default {
         console.log(error)
       })
   },
+  components: { CharactersRemainingInfo },
   data () {
     return {
       form: {
         visitor: {
-          code: null,
-          fullName: null,
-          titlePosition: null,
+          code: '',
+          fullName: '',
+          titlePosition: '',
           substationId: null
         },
         receiver: {
@@ -102,7 +118,7 @@ export default {
           fullName: '',
           titlePosition: ''
         },
-        reasonVisit: null
+        reasonVisit: ''
       },
       substations: [],
       loading: {
