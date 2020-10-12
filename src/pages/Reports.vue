@@ -5,7 +5,6 @@
       <q-btn color="primary" icon="arrow_circle_down" :label="$t('reports.csv_button')" @click="downloadReportAsCSV()" :loading="isDownloadLoading" v-show="visits.length > 0" />
     </div>
     <q-page>
-    <div class="q-pa-sm">
     <div class="row">
       <div class="col">
             <AppDatePicker class="inline-block" :label="$t('reports.from_date')" v-model.trim="filters.fromDate" />
