@@ -5,12 +5,39 @@
       <q-btn color="primary" icon="arrow_circle_down" :label="$t('reports.csv_button')" @click="downloadReportAsCSV()" :loading="isDownloadLoading" v-show="visits.length > 0" />
     </div>
     <q-page>
-      <div class="q-pa-sm">
-        <div class="row">
-          <div class="col">
-            <AppDatePicker class="inline-block" :label="$t('reports.from_date')" v-model.trim="filters.fromDate" />
-            <AppDatePicker class="inline-block" :label="$t('reports.to_date')" v-model.trim="filters.toDate" />
-          </div>
+    <div class="q-pa-sm">
+    <div class="row">
+      <div class="col">
+          <AppDatePicker class="inline-block" :label="$t('reports.from_date')" v-model.trim="filters.fromDate" />
+          <AppDatePicker class="inline-block" :label="$t('reports.to_date')" v-model.trim="filters.toDate" />
+      </div>
+    </div>
+    <div class="q-pl-sm row">
+        <div class="col flex">
+          <q-input disable class="q-mr-md" label="Visitor code" v-model.trim="filters.visitorCode" />
+          <q-input disable label="Receiver code" v-model.trim="filters.receiverCode" />
+          <q-input disable class="q-mr-md" label="Visitor code" v-model.trim="filters.visitorCode" />
+          <q-input disable label="Receiver code" v-model.trim="filters.receiverCode" />
+          <q-select
+            v-model="filters.substationId"
+            :options="substations"
+            label="Subestación"
+            style="width:200px"
+            class="q-ml-md"
+            emit-value
+            map-options
+            option-value="id"
+            option-label="name"
+          >
+          <template v-slot:append>
+          <q-icon
+            v-if="filters.substationId !== null"
+            class="cursor-pointer"
+            name="clear"
+            @click.stop="filters.substationId = null"
+          />
+        </template>
+          </q-select>
         </div>
         <div class="row q-pl-sm">
             <div class="col flex">
@@ -49,13 +76,23 @@ export default {
     AppDatePicker: () => import('../components/AppDatePicker')
   },
   name: 'ReportPageComponent',
+  mounted () {
+    this.$store.dispatch('substations/getAll')
+      .then(response => {
+        this.substations = response.data.data
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  },
   data () {
     return {
       filters: {
         visitorCode: '',
         receiverCode: '',
         fromDate: '',
-        toDate: ''
+        toDate: '',
+        substationId: ''
       },
       visits: [],
       isReportLoading: false,
@@ -76,6 +113,7 @@ export default {
         },
         { name: 'fullNameVisitor', align: 'left', label: this.$t('reports_table.visitor_name'), field: row => row.visitor.fullName, sortable: true },
         { name: 'titleVisitor', label: this.$t('reports_table.visitor_title'), field: row => row.visitor.titlePosition, sortable: true },
+        { name: 'substation', label: 'Substation', field: row => row.substation.name, sortable: true },
         { name: 'reason', align: 'left', label: this.$t('reports_table.reason_for_visit'), field: 'reasonVisit' },
         { name: 'receiverCode', align: 'left', label: this.$t('reports_table.receiver_code'), field: row => row.receiver.code },
         { name: 'fullNameReceiver', align: 'left', label: this.$t('reports_table.receiver_name'), field: row => row.receiver.fullName },

@@ -29,6 +29,17 @@
             :rules="[formRulesMixin_requiredInput]"
           />
           <characters-remaining-info :text="form.visitor.titlePosition" :maxLength="150" :numberCharactersToNotify="130" />
+          <q-select
+            v-model="form.visitor.substationId"
+            :options="substations"
+            label="Subestación"
+            class="q-mb-md"
+            emit-value
+            map-options
+            option-value="id"
+            option-label="name"
+            :rules="[val => !!val || 'Please select value']"
+          />
           <q-input
             v-model="form.reasonVisit"
             maxlength="256"
@@ -84,6 +95,15 @@ export default {
   name: 'PageIndex',
   mixins: [formMixin],
   components: { CharactersRemainingInfo },
+  mounted () {
+    this.$store.dispatch('substations/getAll')
+      .then(response => {
+        this.substations = response.data.data
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  },
   data () {
     return {
       form: {
@@ -99,6 +119,7 @@ export default {
         },
         reasonVisit: ''
       },
+      substations: [],
       loading: {
         visitor: false,
         receiver: false,
@@ -115,6 +136,7 @@ export default {
           this.form.visitor.code = null
           this.form.visitor.fullName = null
           this.form.visitor.titlePosition = null
+          this.form.visitor.substationId = null
           this.form.reasonVisit = null
           this.$q.notify({
             type: 'positive',
