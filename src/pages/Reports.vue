@@ -1,22 +1,62 @@
 <template>
   <q-page-container style="padding-left: 0; padding-top: 25px">
     <div class="q-ml-md">
-      <q-btn class="q-mr-sm" color="primary" icon="file_copy" :label="$t('reports.get_report')" :loading="isReportLoading" @click="fetchReport()" />
-      <q-btn color="primary" icon="arrow_circle_down" :label="$t('reports.csv_button')" @click="downloadReportAsCSV()" :loading="isDownloadLoading" v-show="visits.length > 0" />
+      <q-btn
+        class="q-mr-sm"
+        color="primary"
+        icon="file_copy"
+        :label="$t('reports.get_report')"
+        :loading="isReportLoading"
+        @click="fetchReport()"
+      />
+      <q-btn
+        color="primary"
+        icon="arrow_circle_down"
+        :label="$t('reports.csv_button')"
+        @click="downloadReportAsCSV()"
+        :loading="isDownloadLoading"
+        v-show="visits.length > 0"
+      />
     </div>
     <q-page>
-    <div class="row">
-      <div class="col">
-            <AppDatePicker class="inline-block" :label="$t('reports.from_date')" v-model.trim="filters.fromDate" />
-            <AppDatePicker class="inline-block" :label="$t('reports.to_date')" v-model.trim="filters.toDate" />
+      <div class="row">
+        <div class="col">
+          <AppDatePicker
+            class="inline-block"
+            :label="$t('reports.from_date')"
+            v-model.trim="filters.fromDate"
+          />
+          <AppDatePicker
+            class="inline-block"
+            :label="$t('reports.to_date')"
+            v-model.trim="filters.toDate"
+          />
+        </div>
       </div>
-    </div>
-    <div class="q-pl-sm row">
+      <div class="q-pl-sm row">
         <div class="col flex">
-          <q-input disable class="q-mr-md" label="Visitor code" v-model.trim="filters.visitorCode" />
-          <q-input disable label="Receiver code" v-model.trim="filters.receiverCode" />
-          <q-input disable class="q-mr-md" label="Visitor code" v-model.trim="filters.visitorCode" />
-          <q-input disable label="Receiver code" v-model.trim="filters.receiverCode" />
+          <q-input
+            disable
+            class="q-mr-md"
+            label="Visitor code"
+            v-model.trim="filters.visitorCode"
+          />
+          <q-input
+            disable
+            label="Receiver code"
+            v-model.trim="filters.receiverCode"
+          />
+          <q-input
+            disable
+            class="q-mr-md"
+            label="Visitor code"
+            v-model.trim="filters.visitorCode"
+          />
+          <q-input
+            disable
+            label="Receiver code"
+            v-model.trim="filters.receiverCode"
+          />
           <q-select
             v-model="filters.substationId"
             :options="substations"
@@ -28,37 +68,48 @@
             option-value="id"
             option-label="name"
           >
-          <template v-slot:append>
-          <q-icon
-            v-if="filters.substationId !== null"
-            class="cursor-pointer"
-            name="clear"
-            @click.stop="filters.substationId = null"
-          />
-        </template>
+            <template v-slot:append>
+              <q-icon
+                v-if="filters.substationId !== null"
+                class="cursor-pointer"
+                name="clear"
+                @click.stop="filters.substationId = null"
+              />
+            </template>
           </q-select>
         </div>
         <div class="row q-pl-sm">
-            <div class="col flex">
-              <q-input disable class="q-mr-md" :label="$t('reports_table.visitor_code')" v-model.trim="filters.visitorCode" />
-              <q-input disable :label="$t('reports_table.receiver_code')" v-model.trim="filters.receiverCode" />
-            </div>
+          <div class="col flex">
+            <q-input
+              disable
+              class="q-mr-md"
+              :label="$t('reports_table.visitor_code')"
+              v-model.trim="filters.visitorCode"
+            />
+            <q-input
+              disable
+              :label="$t('reports_table.receiver_code')"
+              v-model.trim="filters.receiverCode"
+            />
+          </div>
         </div>
-        <div class="row q-mt-lg">
-          <div class="col">
-            <div class="q-pa-sm">
-              <q-table
-                :title="$t('reports.title')"
-                :data="visits"
-                :columns="tableColumns"
-                :loading="isReportLoading"
-                :rows-per-page-label="$t('reports.table_recors_per_page')"
-                :no-data-label="$t('reports.table_no_data')"
-                row-key="date"
-              >
-                <template #top-right>{{ $t('reports.table_results',{results: visits.length}) }}</template>
-              </q-table>
-            </div>
+      </div>
+      <div class="row q-mt-lg">
+        <div class="col">
+          <div class="q-pa-sm">
+            <q-table
+              :title="$t('reports.title')"
+              :data="visits"
+              :columns="tableColumns"
+              :loading="isReportLoading"
+              :rows-per-page-label="$t('reports.table_recors_per_page')"
+              :no-data-label="$t('reports.table_no_data')"
+              row-key="date"
+            >
+              <template #top-right>{{
+                $t("reports.table_results", { results: visits.length })
+              }}</template>
+            </q-table>
           </div>
         </div>
       </div>
@@ -76,7 +127,8 @@ export default {
   },
   name: 'ReportPageComponent',
   mounted () {
-    this.$store.dispatch('substations/getAll')
+    this.$store
+      .dispatch('substations/getAll')
       .then(response => {
         this.substations = response.data.data
       })
@@ -111,21 +163,66 @@ export default {
           format: val => `${val}`,
           sortable: true
         },
-        { name: 'fullNameVisitor', align: 'left', label: this.$t('reports_table.visitor_name'), field: row => row.visitor.fullName, sortable: true },
-        { name: 'titleVisitor', label: this.$t('reports_table.visitor_title'), field: row => row.visitor.titlePosition, sortable: true },
-        { name: 'substation', label: 'Substation', field: row => row.substation.name, sortable: true },
-        { name: 'reason', align: 'left', label: this.$t('reports_table.reason_for_visit'), field: 'reasonVisit' },
-        { name: 'receiverCode', align: 'left', label: this.$t('reports_table.receiver_code'), field: row => row.receiver.code },
-        { name: 'fullNameReceiver', align: 'left', label: this.$t('reports_table.receiver_name'), field: row => row.receiver.fullName },
-        { name: 'titleReceiver', align: 'left', label: this.$t('reports_table.receiver_title'), field: row => row.receiver.titlePosition, sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) },
-        { name: 'date', align: 'left', label: this.$t('date'), field: row => date.formatDate(row.createdAt, 'YYYY/MM/DD hh:mm:ss A'), sortable: true }
+        {
+          name: 'fullNameVisitor',
+          align: 'left',
+          label: this.$t('reports_table.visitor_name'),
+          field: row => row.visitor.fullName,
+          sortable: true
+        },
+        {
+          name: 'titleVisitor',
+          label: this.$t('reports_table.visitor_title'),
+          field: row => row.visitor.titlePosition,
+          sortable: true
+        },
+        {
+          name: 'substation',
+          label: 'Substation',
+          field: row => (row.substation ? row.substation.name : null),
+          sortable: true
+        },
+        {
+          name: 'reason',
+          align: 'left',
+          label: this.$t('reports_table.reason_for_visit'),
+          field: 'reasonVisit'
+        },
+        {
+          name: 'receiverCode',
+          align: 'left',
+          label: this.$t('reports_table.receiver_code'),
+          field: row => row.receiver.code
+        },
+        {
+          name: 'fullNameReceiver',
+          align: 'left',
+          label: this.$t('reports_table.receiver_name'),
+          field: row => row.receiver.fullName
+        },
+        {
+          name: 'titleReceiver',
+          align: 'left',
+          label: this.$t('reports_table.receiver_title'),
+          field: row => row.receiver.titlePosition,
+          sortable: true,
+          sort: (a, b) => parseInt(a, 10) - parseInt(b, 10)
+        },
+        {
+          name: 'date',
+          align: 'left',
+          label: this.$t('date'),
+          field: row => date.formatDate(row.createdAt, 'YYYY/MM/DD hh:mm:ss A'),
+          sortable: true
+        }
       ]
     }
   },
   methods: {
     fetchReport () {
       this.isReportLoading = true
-      this.$store.dispatch('visits/getAll', this.filters)
+      this.$store
+        .dispatch('visits/getAll', this.filters)
         .then(({ data: response }) => {
           this.visits = response.data
         })
@@ -158,12 +255,16 @@ export default {
       })
 
       const csv = Papa.unparse(parseVisits)
-      const fileName = `${date.formatDate(Date.now(), 'YYYY/MM/DD hh:mm:ss')}.csv`
+      const fileName = `${date.formatDate(
+        Date.now(),
+        'YYYY/MM/DD hh:mm:ss'
+      )}.csv`
 
       const a = document.createElement('a')
       a.textContent = 'download'
       a.download = fileName
-      a.href = 'data:text/csv;charset=utf-8,%EF%BB%BF' + encodeURIComponent(csv)
+      a.href =
+        'data:text/csv;charset=utf-8,%EF%BB%BF' + encodeURIComponent(csv)
       a.click()
       this.isDownloadLoading = false
     }
@@ -172,7 +273,7 @@ export default {
 </script>
 
 <style scoped>
-  .inline-block {
-    display: inline-block;
-  }
+.inline-block {
+  display: inline-block;
+}
 </style>
